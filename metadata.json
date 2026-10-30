@@ -1,0 +1,6 @@
+{
+  "name": "FireShield AI",
+  "description": "AI-Powered Fire Risk Prediction, Detection & Suppression System prototype for industrial facilities, plants, and warehouses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
