@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FireShieldProvider, useFireShield } from './context/FireShieldContext';
 import { Sidebar, NavPage } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -12,7 +12,7 @@ import { Settings } from './pages/Settings';
 import { SuppressionModal } from './components/SuppressionModal';
 import { AlertDetailsModal } from './components/AlertDetailsModal';
 import { AlertItem } from './types';
-import { Menu, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<NavPage>('overview');
@@ -21,6 +21,16 @@ const MainLayout: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const { acknowledgeAlert, resolveAlert } = useFireShield();
+
+  // Ensure window is always pinned to (0,0) and disable browser scroll restoration
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   const getPageTitle = (page: NavPage): string => {
     switch (page) {
@@ -42,9 +52,9 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden font-sans transition-colors duration-200">
+    <div className="flex h-full w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden font-sans transition-colors duration-200">
       {/* Desktop Fixed Sidebar */}
-      <div className="hidden md:flex h-full shadow-sm z-30">
+      <div className="hidden md:flex h-full shadow-sm z-30 shrink-0">
         <Sidebar
           currentPage={currentPage}
           onSelectPage={(page) => setCurrentPage(page)}
@@ -65,7 +75,7 @@ const MainLayout: React.FC = () => {
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="min-h-[68px] flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
           <span className="font-extrabold text-slate-900 dark:text-white text-sm">FireShield AI Menu</span>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
@@ -86,24 +96,12 @@ const MainLayout: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Top Header */}
-        <div className="flex items-center w-full">
-          {/* Mobile hamburger button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden p-3.5 bg-white dark:bg-slate-900 border-b border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900"
-            aria-label="Toggle navigation menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          
-          <div className="flex-1 min-w-0">
-            <Header
-              pageTitle={getPageTitle(currentPage)}
-              onOpenAlerts={() => setCurrentPage('alerts')}
-              onOpenSuppressionModal={() => setIsSuppressionModalOpen(true)}
-            />
-          </div>
-        </div>
+        <Header
+          pageTitle={getPageTitle(currentPage)}
+          onOpenAlerts={() => setCurrentPage('alerts')}
+          onOpenSuppressionModal={() => setIsSuppressionModalOpen(true)}
+          onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+        />
 
         {/* Scrollable Viewport with technical grid motif */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-slate-50/70 dark:bg-slate-950/70 bg-tech-grid">

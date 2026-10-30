@@ -11,6 +11,27 @@
   color-scheme: light dark;
 }
 
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
